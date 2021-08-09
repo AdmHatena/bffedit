@@ -1,3 +1,3 @@
 @echo off
 
-gcc .\src\app.c -o bffedit.exe -mwindows
+csc .\csharp\bffedit.cs

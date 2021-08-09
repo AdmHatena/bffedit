@@ -8,8 +8,6 @@ namespace bffedit{
     }
 
     bffeditMain(){
-      this.Width = 1280;
-      this.Height = 720;
     }
   }
 }
