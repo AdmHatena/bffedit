@@ -15,6 +15,44 @@ namespace bffedit {
     private MenuStrip menu;
     private ToolStripMenuItem menuFile; // ファイル
     private ToolStripMenuItem menuFileQuit; // ファイル -> 終了
+    private ToolStripMenuItem menuFileSave; // ファイル -> 保存
+
+    // 内容が変更されたかどうか
+    bool isTextEdited = false;
+
+    // 現在開いているファイルのパス
+    // string filePath = null;
+
+    private bool saveContents(bool overwrite = false){
+      string content = this.textBox1.Text;
+      SaveFileDialog sfd = new SaveFileDialog();
+      sfd.FileName = "untitled.txt";
+      sfd.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+      sfd.Filter = "テキストファイル (*.txt)|*.txt|すべてのファイル (*.*)|*.*";
+      sfd.FilterIndex = 1;
+      sfd.Title = "名前を付けて保存";
+      sfd.RestoreDirectory = true;
+      sfd.OverwritePrompt = true;
+      sfd.CheckPathExists = true;
+      if(sfd.ShowDialog() == DialogResult.OK){
+        System.IO.Stream stream = sfd.OpenFile();
+        if(stream != null){
+          System.IO.StreamWriter sw = new System.IO.StreamWriter(stream);
+          sw.Write(content);
+          sw.Close();
+          stream.Close();
+          this.isTextEdited = false;
+          return true;
+        }
+        return false;
+      }
+      return false;
+    }
+
+    private void quitApplication(){
+      // 終了前に、保存されていない変更があった時に保存ダイアログが開くようにしたい
+      Close(); // アプリケーションの終了
+    }
 
     public bffeditMain() {
       InitializeComponent();
@@ -23,13 +61,16 @@ namespace bffedit {
       // add menuBar
       this.menu = new MenuStrip();
       this.menuFile = new ToolStripMenuItem{ Text = "ファイル" }; // [ファイル]タブの追加
+      this.menuFileSave = new ToolStripMenuItem{ Text = "保存" }; // [保存]項目の追加
+      this.menuFileSave.Click += (s, e) => { this.saveContents(); }; // 内容を保存する
       this.menuFileQuit = new ToolStripMenuItem{ Text = "終了" }; // [終了]項目の追加
-      this.menuFileQuit.Click += (o, e) => Close(); // 終了を押したときにアプリケーションを終了する
-      this.menuFile.DropDownItems.AddRange(new ToolStripMenuItem[]{menuFileQuit});
-      this.menu.Items.AddRange(new ToolStripMenuItem[]{menuFile});
+      this.menuFileQuit.Click += (s, e) => { this.quitApplication(); }; // アプリケーションを終了する
+      this.menuFile.DropDownItems.AddRange(new ToolStripMenuItem[]{this.menuFileSave, this.menuFileQuit});
+      this.menu.Items.AddRange(new ToolStripMenuItem[]{this.menuFile});
 
       // add textBox
       this.textBox1 = new System.Windows.Forms.TextBox();
+      this.textBox1.TextChanged += (s, e) => { this.isTextEdited = true; };
       this.SuspendLayout();
 
       // textBox
