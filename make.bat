@@ -1,3 +1,3 @@
 @echo off
 
-csc .\csharp\bffedit.cs
+csc /target:winexe .\csharp\bffedit.cs
