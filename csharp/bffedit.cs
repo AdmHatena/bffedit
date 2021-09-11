@@ -22,26 +22,42 @@ namespace bffedit {
     bool isTextEdited = false;
 
     // 現在開いているファイルのパス
-    // string filePath = null;
+    string filePath = null;
 
     private bool saveContents(bool overwrite = false){
+      // 「上書き保存」モードのときに開いてるファイルが存在しない場合、「名前を付けて保存」モードに変更
+      if(overwrite & this.filePath == null) overwrite = false;
+
+      // テキストボックスの内容を取得
       string content = this.textBox1.Text;
+
+      // 「名前を付けて保存」ダイアログの作成
       SaveFileDialog sfd = new SaveFileDialog();
       sfd.FileName = "untitled.txt";
-      sfd.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+      sfd.InitialDirectory = this.filePath == null ? System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) : System.IO.Path.GetDirectoryName(this.filePath);
       sfd.Filter = "テキストファイル (*.txt)|*.txt|すべてのファイル (*.*)|*.*";
       sfd.FilterIndex = 1;
       sfd.Title = "名前を付けて保存";
       sfd.RestoreDirectory = true;
       sfd.OverwritePrompt = true;
       sfd.CheckPathExists = true;
+
+      // 実際にダイアログを出す
       if(sfd.ShowDialog() != DialogResult.OK) return false;
+
+      // ファイルストリームの作成
       System.IO.Stream stream = sfd.OpenFile();
       if(stream == null) return false;
       System.IO.StreamWriter sw = new System.IO.StreamWriter(stream);
+
+      // 内容の書き込み
       sw.Write(content);
+
+      // ファイルストリームを閉じる
       sw.Close();
       stream.Close();
+
+      // 内容変更フラグをリセット
       this.isTextEdited = false;
       return true;
     }
@@ -49,7 +65,7 @@ namespace bffedit {
     private bool openContents(){
       OpenFileDialog ofd = new OpenFileDialog();
       ofd.FileName = "";
-      ofd.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+      ofd.InitialDirectory = this.filePath == null ? System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) : System.IO.Path.GetDirectoryName(this.filePath);
       ofd.Filter = "テキストファイル (*.txt)|*.txt|すべてのファイル (*.*)|*.*";
       ofd.FilterIndex = 1;
       ofd.Title = "開く";
@@ -63,6 +79,7 @@ namespace bffedit {
       string content = sr.ReadToEnd();
       sr.Close();
       stream.Close();
+      this.filePath = ofd.FileName;
       this.textBox1.Text = content;
       return true;
     }
