@@ -27,8 +27,6 @@ namespace bffedit {
       this.menuFileQuit.Click += (o, e) => Close(); // 終了を押したときにアプリケーションを終了する
       this.menuFile.DropDownItems.AddRange(new ToolStripMenuItem[]{menuFileQuit});
       this.menu.Items.AddRange(new ToolStripMenuItem[]{menuFile});
-      // this.menu.Location = new Point(0, 0);
-      // this.menu.size = new Size(30, 400);
 
       // add textBox
       this.textBox1 = new System.Windows.Forms.TextBox();
@@ -42,8 +40,8 @@ namespace bffedit {
       this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
       // Form
       this.ClientSize = new System.Drawing.Size(800, 480);
-      this.Controls.Add(this.menu);
       this.Controls.Add(this.textBox1);
+      this.Controls.Add(this.menu);
       this.Text = "bffedit";
       this.ResumeLayout(false);
       this.PerformLayout();
