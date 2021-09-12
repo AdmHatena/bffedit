@@ -96,10 +96,12 @@ namespace bffedit {
       // add menuBar
       this.menu = new MenuStrip();
       this.menuFile = new ToolStripMenuItem{ Text = "ファイル" }; // [ファイル]タブの追加
-      this.menuFileSave = new ToolStripMenuItem{ Text = "保存" }; // [保存]項目の追加
+      this.menuFileSave = new ToolStripMenuItem{ Text = "名前を付けて保存" }; // [名前を付けて保存]項目の追加
       this.menuFileSave.Click += (s, e) => { this.saveContents(); }; // 内容を保存する
-      this.menuFileOpen = new ToolStripMenuItem{ Text = "開く" }; // [保存]項目の追加
+      this.menuFileSave.ShortcutKeys = Keys.Control | Keys.Shift | Keys.S; // Ctrl + Shift + S
+      this.menuFileOpen = new ToolStripMenuItem{ Text = "開く" }; // [開く]項目の追加
       this.menuFileOpen.Click += (s, e) => { this.openContents(); }; // 内容を保存する
+      this.menuFileOpen.ShortcutKeys = Keys.Control | Keys.O; // Ctrl + O
       this.menuFileQuit = new ToolStripMenuItem{ Text = "終了" }; // [終了]項目の追加
       this.menuFileQuit.Click += (s, e) => { this.quitApplication(); }; // アプリケーションを終了する
       this.menuFile.DropDownItems.AddRange(new ToolStripMenuItem[]{this.menuFileSave, this.menuFileOpen, this.menuFileQuit});
