@@ -14,9 +14,10 @@ namespace bffedit {
     // ----- menu bar ----- //
     private MenuStrip menu;
     private ToolStripMenuItem menuFile; // ファイル
-    private ToolStripMenuItem menuFileQuit; // ファイル -> 終了
-    private ToolStripMenuItem menuFileSave; // ファイル -> 保存
+    private ToolStripMenuItem menuFileOverwrite; // ファイル -> 上書き保存
+    private ToolStripMenuItem menuFileSave; // ファイル -> 名前を付けて保存
     private ToolStripMenuItem menuFileOpen; // ファイル -> 開く
+    private ToolStripMenuItem menuFileQuit; // ファイル -> 終了
 
     // 内容が変更されたかどうか
     bool isTextEdited = false;
@@ -28,34 +29,37 @@ namespace bffedit {
       // 「上書き保存」モードのときに開いてるファイルが存在しない場合、「名前を付けて保存」モードに変更
       if(overwrite & this.filePath == null) overwrite = false;
 
-      // テキストボックスの内容を取得
-      string content = this.textBox1.Text;
+      if(!overwrite){
+        // 「名前を付けて保存」ダイアログの作成
+        SaveFileDialog sfd = new SaveFileDialog();
+        sfd.FileName = "untitled.txt";
+        sfd.InitialDirectory = this.filePath == null ? System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) : System.IO.Path.GetDirectoryName(this.filePath);
+        sfd.Filter = "テキストファイル (*.txt)|*.txt|すべてのファイル (*.*)|*.*";
+        sfd.FilterIndex = 1;
+        sfd.Title = "名前を付けて保存";
+        sfd.RestoreDirectory = true;
+        sfd.OverwritePrompt = true;
+        sfd.CheckPathExists = true;
 
-      // 「名前を付けて保存」ダイアログの作成
-      SaveFileDialog sfd = new SaveFileDialog();
-      sfd.FileName = "untitled.txt";
-      sfd.InitialDirectory = this.filePath == null ? System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) : System.IO.Path.GetDirectoryName(this.filePath);
-      sfd.Filter = "テキストファイル (*.txt)|*.txt|すべてのファイル (*.*)|*.*";
-      sfd.FilterIndex = 1;
-      sfd.Title = "名前を付けて保存";
-      sfd.RestoreDirectory = true;
-      sfd.OverwritePrompt = true;
-      sfd.CheckPathExists = true;
+        // 実際にダイアログを出す
+        if(sfd.ShowDialog() != DialogResult.OK) return false;
+        // ファイルストリームの作成
+        System.IO.Stream stream = sfd.OpenFile();
+        if(stream == null) return false;
+        System.IO.StreamWriter sw = new System.IO.StreamWriter(stream);
 
-      // 実際にダイアログを出す
-      if(sfd.ShowDialog() != DialogResult.OK) return false;
+        // 内容の書き込み
+        sw.Write(this.textBox1.Text);
 
-      // ファイルストリームの作成
-      System.IO.Stream stream = sfd.OpenFile();
-      if(stream == null) return false;
-      System.IO.StreamWriter sw = new System.IO.StreamWriter(stream);
+        // ファイルストリームを閉じる
+        sw.Close();
+        stream.Close();
 
-      // 内容の書き込み
-      sw.Write(content);
-
-      // ファイルストリームを閉じる
-      sw.Close();
-      stream.Close();
+        // 現在開いているファイル名を記録
+        this.filePath = sfd.FileName;
+      } else{
+        System.IO.File.WriteAllText(this.filePath, this.textBox1.Text);
+      }
 
       // 内容変更フラグをリセット
       this.isTextEdited = false;
@@ -96,15 +100,18 @@ namespace bffedit {
       // add menuBar
       this.menu = new MenuStrip();
       this.menuFile = new ToolStripMenuItem{ Text = "ファイル" }; // [ファイル]タブの追加
-      this.menuFileSave = new ToolStripMenuItem{ Text = "名前を付けて保存" }; // [名前を付けて保存]項目の追加
-      this.menuFileSave.Click += (s, e) => { this.saveContents(); }; // 内容を保存する
-      this.menuFileSave.ShortcutKeys = Keys.Control | Keys.Shift | Keys.S; // Ctrl + Shift + S
       this.menuFileOpen = new ToolStripMenuItem{ Text = "開く" }; // [開く]項目の追加
       this.menuFileOpen.Click += (s, e) => { this.openContents(); }; // 内容を保存する
       this.menuFileOpen.ShortcutKeys = Keys.Control | Keys.O; // Ctrl + O
+      this.menuFileOverwrite = new ToolStripMenuItem{ Text = "上書き保存" }; // [上書き保存]項目の追加
+      this.menuFileOverwrite.Click += (s, e) => { this.saveContents(true); }; // 内容を上書き保存する
+      this.menuFileOverwrite.ShortcutKeys = Keys.Control | Keys.S; // Ctrl + S
+      this.menuFileSave = new ToolStripMenuItem{ Text = "名前を付けて保存" }; // [名前を付けて保存]項目の追加
+      this.menuFileSave.Click += (s, e) => { this.saveContents(); }; // 内容を保存する
+      this.menuFileSave.ShortcutKeys = Keys.Control | Keys.Shift | Keys.S; // Ctrl + Shift + S
       this.menuFileQuit = new ToolStripMenuItem{ Text = "終了" }; // [終了]項目の追加
       this.menuFileQuit.Click += (s, e) => { this.quitApplication(); }; // アプリケーションを終了する
-      this.menuFile.DropDownItems.AddRange(new ToolStripMenuItem[]{this.menuFileSave, this.menuFileOpen, this.menuFileQuit});
+      this.menuFile.DropDownItems.AddRange(new ToolStripMenuItem[]{this.menuFileOpen, this.menuFileOverwrite, this.menuFileSave, this.menuFileQuit});
       this.menu.Items.AddRange(new ToolStripMenuItem[]{this.menuFile});
 
       // add textBox
