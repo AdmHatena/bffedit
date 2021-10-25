@@ -152,7 +152,7 @@ namespace bffedit {
       this.menuFileQuit.Click += (s, e) => { this.quitApplication(); }; // アプリケーションを終了する
       this.menuFile.DropDownItems.AddRange(new ToolStripMenuItem[]{this.menuFileOpen, this.menuFileOverwrite, this.menuFileSave, this.menuFileQuit});
 
-      this.menuFont = new ToolStripMenuItem{ Text = "フォント" }; // [フォント]タブの追加
+      this.menuFont = new ToolStripMenuItem{ Text = "書式" }; // [フォント]タブの追加
       this.menuFontType = new ToolStripMenuItem{ Text = "フォント変更" }; // [フォント変更]タブの追加
       this.menuFontType.Click += (s, e) => { this.callFontSettingsWindow(); }; // フォント変更ウィンドウ呼び出し
       this.menuFont.DropDownItems.AddRange(new ToolStripMenuItem[]{this.menuFontType});
@@ -170,6 +170,7 @@ namespace bffedit {
       this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
       this.textBox1.Multiline = true;
       this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+      this.textBox1.Font = new Font(this.textBox1.Font.FontFamily, 12); // フォントの設定
       // Form
       this.ClientSize = new System.Drawing.Size(800, 480);
       this.Controls.Add(this.textBox1);
