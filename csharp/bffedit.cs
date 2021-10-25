@@ -3,11 +3,38 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
 namespace bffedit {
+  public class FontSettingDialog : Form {  
+    private FontFamily[] fonts;
+    private ComboBox fontSelector;
+    public FontSettingDialog(){
+      this.Text = "フォントの変更";
+
+      this.MaximizeBox = false;
+      this.MinimizeBox = false;
+      this.FormBorderStyle = FormBorderStyle.FixedDialog;
+      this.StartPosition = FormStartPosition.CenterParent;
+
+      // インストール済フォントリストの取得
+      InstalledFontCollection fts = new InstalledFontCollection();
+      this.fonts = fts.Families;
+
+      // フォント選択肢の作成
+      this.fontSelector = new ComboBox();
+      foreach(FontFamily ff in this.fonts){
+        this.fontSelector.Items.Add(ff.Name);
+      }
+
+      this.SuspendLayout();
+      this.Controls.Add(this.fontSelector);
+      this.PerformLayout();
+    }
+  }
   public class bffeditMain : Form {
     private TextBox textBox1;
 
@@ -18,6 +45,10 @@ namespace bffedit {
     private ToolStripMenuItem menuFileSave; // ファイル -> 名前を付けて保存
     private ToolStripMenuItem menuFileOpen; // ファイル -> 開く
     private ToolStripMenuItem menuFileQuit; // ファイル -> 終了
+    private ToolStripMenuItem menuFont; // フォント
+    private ToolStripMenuItem menuFontType; // フォント -> フォント変更
+    private ToolStripMenuItem menuHelp; // ヘルプ
+    private ToolStripMenuItem menuHelpInfo; // ヘルプ -> バージョン情報
 
     // 内容が変更されたかどうか
     bool isTextEdited = false;
@@ -88,6 +119,14 @@ namespace bffedit {
       return true;
     }
 
+    private void callFontSettingsWindow(){
+      FontSettingDialog dialog= new FontSettingDialog();
+      dialog.ShowDialog();
+    }
+    public void selectedFontCommunication(string fontname){
+      //
+    }
+
     private void quitApplication(){
       // 終了前に、保存されていない変更があった時に保存ダイアログが開くようにしたい
       Close(); // アプリケーションの終了
@@ -112,7 +151,13 @@ namespace bffedit {
       this.menuFileQuit = new ToolStripMenuItem{ Text = "終了" }; // [終了]項目の追加
       this.menuFileQuit.Click += (s, e) => { this.quitApplication(); }; // アプリケーションを終了する
       this.menuFile.DropDownItems.AddRange(new ToolStripMenuItem[]{this.menuFileOpen, this.menuFileOverwrite, this.menuFileSave, this.menuFileQuit});
-      this.menu.Items.AddRange(new ToolStripMenuItem[]{this.menuFile});
+
+      this.menuFont = new ToolStripMenuItem{ Text = "フォント" }; // [フォント]タブの追加
+      this.menuFontType = new ToolStripMenuItem{ Text = "フォント変更" }; // [フォント変更]タブの追加
+      this.menuFontType.Click += (s, e) => { this.callFontSettingsWindow(); }; // フォント変更ウィンドウ呼び出し
+      this.menuFont.DropDownItems.AddRange(new ToolStripMenuItem[]{this.menuFontType});
+
+      this.menu.Items.AddRange(new ToolStripMenuItem[]{this.menuFile, this.menuFont});
 
       // add textBox
       this.textBox1 = new System.Windows.Forms.TextBox();
