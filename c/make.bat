@@ -1,0 +1,1 @@
+g++ -o bffedit.exe bffedit.c -mwindows
