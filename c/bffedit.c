@@ -25,13 +25,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
 
   // メッセージ処理
   switch(uMsg){
-    case WM_CREATE:
+    case WM_CREATE: // ウィンドウが生成されたとき
       InitCommonControls();
+      // エディットボックス属性設定
       hEditBox = CreateWindowEx(
         0,
         "EDIT",
         "",
-        WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL,
+        WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | WS_HSCROLL | ES_MULTILINE | ES_AUTOHSCROLL | ES_AUTOVSCROLL,
         10,
         10,
         200,
@@ -41,10 +42,25 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
         hInst,
         NULL
       );
-      SendMessage(hEditBox, EM_SETLIMITTEXT, (WPARAM)63, 0);
+      SendMessage(hEditBox, EM_SETLIMITTEXT, (WPARAM)640000, 0);
       SendMessage(hEditBox, WM_CTLCOLORSTATIC, (WPARAM)_countof(buffer), (LPARAM)buffer);
     break;
-    case WM_DESTROY:
+    case WM_SIZE: // ウィンドウサイズが変更されたとき
+      if(wParam == SIZE_RESTORED){ // ウィンドウサイズが変更されたとき (最大化、最小化ではなく)
+        int nWidth  = lParam & 0xffff;         // 新しいウィンドウ幅
+        int nHeight = (lParam >> 16) & 0xffff; // 新しいウィンドウ高さ
+        SetWindowPos(
+          hEditBox,
+          NULL,
+          0,
+          0,
+          nWidth,
+          nHeight,
+          SWP_SHOWWINDOW);
+        UpdateWindow(hwnd);
+      }
+    break;
+    case WM_DESTROY: // ウィンドウが破棄されるとき
       PostQuitMessage(0);
     break;
     default:
