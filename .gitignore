@@ -1,3 +1,4 @@
 *.exe
 *.o
+.vscode
 csharp/test.cs
