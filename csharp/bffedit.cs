@@ -9,7 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 
 namespace bffedit {
-  public class FontSettingDialog : Form {  
+  public class FontSettingDialog : Form {
     private FontFamily[] fonts;
     private ComboBox fontSelector;
     public FontSettingDialog(){
@@ -36,7 +36,7 @@ namespace bffedit {
     }
   }
   public class bffeditMain : Form {
-    private TextBox textBox1;
+    private RichTextBox textBox1;
 
     // ----- menu bar ----- //
     private MenuStrip menu;
@@ -160,16 +160,13 @@ namespace bffedit {
       this.menu.Items.AddRange(new ToolStripMenuItem[]{this.menuFile, this.menuFont});
 
       // add textBox
-      this.textBox1 = new System.Windows.Forms.TextBox();
+      this.textBox1 = new System.Windows.Forms.RichTextBox();
       this.textBox1.TextChanged += (s, e) => { this.isTextEdited = true; };
       this.SuspendLayout();
 
       // textBox
-      this.textBox1.AcceptsReturn = true;
       this.textBox1.AcceptsTab = true;
       this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.textBox1.Multiline = true;
-      this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
       this.textBox1.Font = new Font(this.textBox1.Font.FontFamily, 12); // フォントの設定
       // Form
       this.ClientSize = new System.Drawing.Size(800, 480);
