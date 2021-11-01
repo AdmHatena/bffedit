@@ -167,7 +167,8 @@ namespace bffedit {
       // textBox
       this.textBox1.AcceptsTab = true;
       this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-      this.textBox1.Font = new Font(this.textBox1.Font.FontFamily, 12); // フォントの設定
+      this.textBox1.SelectionFont = new Font(this.textBox1.Font.FontFamily, 10); // RichTextBoxでのフォント設定
+
       // Form
       this.ClientSize = new System.Drawing.Size(800, 480);
       this.Controls.Add(this.textBox1);
