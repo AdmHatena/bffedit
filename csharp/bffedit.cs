@@ -11,7 +11,10 @@ using System.Windows.Forms;
 namespace bffedit {
   public class FontSettingDialog : Form {
     private FontFamily[] fonts;
+    private Label fontLabel1, fontLabel2, fontLabel3;
     private ComboBox fontSelector;
+    private NumericUpDown fontSizeSelector;
+    private GroupBox fontSample;
     public FontSettingDialog(){
       this.Text = "フォントの変更";
 
@@ -20,18 +23,53 @@ namespace bffedit {
       this.FormBorderStyle = FormBorderStyle.FixedDialog;
       this.StartPosition = FormStartPosition.CenterParent;
 
+      // ラベル - フォント名
+      this.fontLabel1 = new Label();
+      this.fontLabel1.Text = "フォント名";
+      this.fontLabel1.Location = new Point(10, 10);
+      this.fontLabel1.AutoSize = true;
+
       // インストール済フォントリストの取得
       InstalledFontCollection fts = new InstalledFontCollection();
       this.fonts = fts.Families;
 
       // フォント選択肢の作成
       this.fontSelector = new ComboBox();
+      this.fontSelector.Location = new Point(10, 25);
       foreach(FontFamily ff in this.fonts){
         this.fontSelector.Items.Add(ff.Name);
       }
 
+      // ラベル - フォントサイズ
+      this.fontLabel2 = new Label();
+      this.fontLabel2.Text = "サイズ";
+      this.fontLabel2.Location = new Point(10, 55);
+      this.fontLabel2.AutoSize = true;
+
+      // フォントサイズ選択肢の作成
+      this.fontSizeSelector = new NumericUpDown();
+      this.fontSizeSelector.Location = new Point(10, 70);
+
+      // フォントのサンプル表示
+      this.fontSample = new GroupBox();
+      this.fontSample.Width = 100;
+      this.fontSample.Height = 100;
+      this.fontSample.Location = new Point(170, 10);
+      this.fontSample.Text = "サンプル";
+      this.fontLabel3 = new Label();
+      this.fontLabel3.AutoSize = true; // 複数行ラベル
+      this.fontLabel3.Text = "BFFEdit\n\nBrain F*ck'n\nFast Editor";
+      this.fontLabel3.Top = 25;
+      this.fontLabel3.Left = 10;
+      this.fontSample.Controls.Add(this.fontLabel3);
+
       this.SuspendLayout();
-      this.Controls.Add(this.fontSelector);
+      this.Controls.AddRange(new Control[] {
+        this.fontLabel1, this.fontSelector,     // フォント選択
+        this.fontLabel2, this.fontSizeSelector, // フォントサイズ
+        this.fontSample                         // フォントのサンプル表示
+      });
+      // this.Controls.Add(this.fontSelector);
       this.PerformLayout();
     }
   }
